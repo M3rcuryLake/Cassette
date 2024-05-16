@@ -16,8 +16,8 @@ from time import sleep
 
 
 
-assmebly_ai_api= "712da2ae0de14a10b04da29feee10fb8"
-urs_api="EgDQ8NlKEcZhvSDqnewrSqgoKSCXMvWTO1BozKgmBJy15embpNoM80"
+assmebly_ai_api = "<ADD YOUR OWN API KEY (AssemblyAI) >"
+urs_api = "<ADD YOUR OWN API KEY (UnrealSpeech)>"
 
 def pfp_wave(buzz):
     if buzz==1:
