@@ -203,10 +203,9 @@ def voice_charecter(chr, trs):
     
 
 def clear():
-    if sys.platform.startswith('linux'):
-        system("clear")
-    elif sys.platform.startswith('win'):
-        system("cls")
+    
+    
+    system("clear")
     print('\033[94m'+'''
 ░░      ░░░░      ░░░░      ░░░░      ░░░        ░░        ░░        ░░        ░
 ▒  ▒▒▒▒  ▒▒  ▒▒▒▒  ▒▒  ▒▒▒▒▒▒▒▒  ▒▒▒▒▒▒▒▒  ▒▒▒▒▒▒▒▒▒▒▒  ▒▒▒▒▒▒▒▒  ▒▒▒▒▒  ▒▒▒▒▒▒▒
@@ -217,8 +216,9 @@ def clear():
 ''')
 
 def cleanup():
-    if sys.platform.startswith('linux'): system("rm -rf F_output.mp3 merged.mp4 output.mp3 subs.srt subtitle.ass temp1.mp4 temp2.mp4 wave_out.mp4 waves.mp4")
-    elif sys.platform.startswith('win'): system("del F_output.mp3 merged.mp4 output.mp3 subs.srt subtitle.ass temp1.mp4 temp2.mp4 wave_out.mp4 waves.mp4")
+    system("rm -rf F_output.mp3 merged.mp4 output.mp3 subs.srt subtitle.ass temp1.mp4 temp2.mp4 wave_out.mp4 waves.mp4")
+
+
 
 def main():
     clear()
@@ -295,9 +295,6 @@ if __name__ == "__main__":
     main()
     
     
-
-
-
     
-       
-
+    
+    

@@ -1,4 +1,3 @@
-playsound 
 g4f[all]
 pydub 
 moviepy 
