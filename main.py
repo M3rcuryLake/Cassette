@@ -241,14 +241,14 @@ def main():
 
 >>> '''))
     clear()
-    QueryList["voices"]=input(f'''\n3. Coose a voice :
+    QueryList["voices"]=int(input(f'''\n3. Coose a voice :
 3.1 : Dan: Young Male (press 1)
 3.2 : Will: Mature Male (press 2)
 3.3 : Scarlett: Young Female (press 3)
 3.4 : Liv: Young Female (press 4)
 3.5 : Amy: Mature Female (press 5)
 
->>> ''')
+>>> '''))
     clear()
     QueryList["backdrop"]=int(input('''4. Choose a background game.
 4.1 : Minecraft (press 1)
