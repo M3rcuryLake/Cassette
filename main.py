@@ -16,8 +16,8 @@ from time import sleep
 
 
 
-assmebly_ai_api = "<ADD YOUR OWN API KEY (AssemblyAI) >"
-urs_api = "<ADD YOUR OWN API KEY (UnrealSpeech)>"
+assmebly_ai_api = "6cfcbd37204f44a288ac782b063c2d95"
+urs_api="EgDQ8NlKEcZhvSDqnewrSqgoKSCXMvWTO1BozKgmBJy15embpNoM80"
 
 def pfp_wave(buzz):
     if buzz==1:
@@ -25,7 +25,7 @@ def pfp_wave(buzz):
     if buzz==2:
         video_p='pictures/Jed.jpeg'        
     if buzz==3:
-        video_p='pictures/Jess.jpeg'
+        video_p='pictures/Jess.jpg'
     if buzz==4:
         video_p='pictures/K-11.jpeg'
     if buzz==5:
@@ -93,7 +93,6 @@ def backdrop(buzz):
     #subclips the gameplay video according to the playtime of the audio
 
     #buzz=QuerList('backdrop')
-    audio_path='output.mp3'
 
     if buzz==1:
         video_path='backdrop/minecraft.mp4'
@@ -103,12 +102,6 @@ def backdrop(buzz):
         video_path='backdrop/gtav.mp4'
     if buzz==4:
         video_path='backdrop/trackmania.mp4'
-
-
-    def aud_dur(file_path):
-       audio_file = AudioSegment.from_file(file_path)
-       duration = audio_file.duration_seconds
-       return duration
     
 
     def vid_dur(file_path):
@@ -117,7 +110,7 @@ def backdrop(buzz):
        return vid_duration
     
 
-    audio_duration = aud_dur(audio_path)
+    audio_duration = AudioSegment.from_file('output.mp3').duration_seconds
     video_duration = vid_dur(video_path)
     print(f"Audio Duration: {audio_duration} seconds, Video Duration: {video_duration}")
     
@@ -193,7 +186,7 @@ def voice_charecter(chr, trs):
     response = requests.post(
       'https://api.v6.unrealspeech.com/stream',
       headers = {
-        'Authorization' : urs_api
+        'Authorization' : f"Bearer {urs_api}"
       },
       json = {
         'Text': trs, # Up to 1,000 characters
