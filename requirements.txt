@@ -1,8 +1,6 @@
 playsound 
 g4f[all]
 pydub 
-simpleaudio 
-unrealspeech 
 moviepy 
 seewav 
 numpy 

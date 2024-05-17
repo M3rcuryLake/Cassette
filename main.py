@@ -7,8 +7,8 @@ from moviepy.editor import *
 from math import ceil
 from os import system
 import sys
-from unrealspeech import UnrealSpeechAPI, play, save
 import seewav
+import requests
 import tempfile
 from pathlib import Path
 from time import sleep
@@ -181,21 +181,33 @@ def model(buzz):
     gen=response.choices[0].message.content
     return(gen)
 
-def voice_charecter(charecter, trs):
+def voice_charecter(chr, trs):
 
     #generates voice
+    if chr==1 : charecter="Dan"
+    if chr==2 : charecter="Will"
+    if chr==3 : charecter="Scarlett"
+    if chr==4 : charecter="Liv"
+    if chr==5 : charecter="Amy"
 
-    api_key = urs_api
-    speech_api = UnrealSpeechAPI(api_key)
-    text_to_speech = trs
-    timestamp_type = "sentence"  # Choose from 'sentence' or 'word'
-    voice_id = charecter  # Choose the desired voice
-    bitrate = "192k"
-    speed = 0 
-    pitch = 1.0
-    audio_data = speech_api.speech(text=text_to_speech,voice_id=voice_id, bitrate=bitrate, timestamp_type=timestamp_type, speed=speed, pitch=pitch)
-    save(audio_data, "output.mp3")
+    response = requests.post(
+      'https://api.v6.unrealspeech.com/stream',
+      headers = {
+        'Authorization' : urs_api
+      },
+      json = {
+        'Text': trs, # Up to 1,000 characters
+        'VoiceId': charecter, # Scarlett, Dan, Liv, Will, Amy
+        'Bitrate': '192k', # 320k, 256k, 192k, ...
+        'Speed': '0', # -1.0 to 1.0
+        'Pitch': '1', # 0.5 to 1.5
+        'Codec': 'libmp3lame', # libmp3lame or pcm_mulaw
+      }
+    )
 
+    with open('output.mp3', 'wb') as f:
+        f.write(response.content)
+    
 
 def clear():
     if sys.platform.startswith('linux'):
@@ -230,11 +242,11 @@ def main():
 >>> '''))
     clear()
     QueryList["voices"]=input(f'''\n3. Coose a voice :
-3.1 : Dan: Young Male
-3.2 : Will: Mature Male
-3.3 : Scarlett: Young Female
-3.4 : Liv: Young Female
-3.5 : Amy: Mature Female
+3.1 : Dan: Young Male (press 1)
+3.2 : Will: Mature Male (press 2)
+3.3 : Scarlett: Young Female (press 3)
+3.4 : Liv: Young Female (press 4)
+3.5 : Amy: Mature Female (press 5)
 
 >>> ''')
     clear()
@@ -245,7 +257,7 @@ def main():
 4.4 : trackmania (press 4)
 
 
->>>'''))
+>>> '''))
     clear()
     QueryList["charecter"]=int(input('''4. Choose a charecter image.
 5.1 : Denn (press 1)
@@ -256,8 +268,8 @@ def main():
 5.6 : Kell (press 6)
 5.7 : Ron (press 7)           
 
->>>'''))
-#    clear()
+>>> '''))
+    clear()
     
     script = model(QueryList['script'])
     sleep(2)
