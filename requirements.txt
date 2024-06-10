@@ -1,5 +1,6 @@
 g4f[all]
-pydub 
+pydub
+pillow
 moviepy 
 seewav 
 numpy 

@@ -7,6 +7,7 @@ from moviepy.editor import *
 from math import ceil
 from os import system
 import sys
+import json
 import seewav
 import requests
 import tempfile
@@ -15,9 +16,14 @@ from time import sleep
 
 
 
+f = open('api_keys.json')
+data = json.load(f)
+assmebly_ai_api = data["AssemblyAI_API"]
+urs_api=data["UnrealSpeech_API"]
+ 
 
-assmebly_ai_api = "6cfcbd37204f44a288ac782b063c2d95"
-urs_api="EgDQ8NlKEcZhvSDqnewrSqgoKSCXMvWTO1BozKgmBJy15embpNoM80"
+#assmebly_ai_api = "6cfcbd37204f44a288ac782b063c2d95"
+#urs_api="EgDQ8NlKEcZhvSDqnewrSqgoKSCXMvWTO1BozKgmBJy15embpNoM80"
 
 def pfp_wave(buzz):
     if buzz==1:
@@ -39,9 +45,10 @@ def pfp_wave(buzz):
     #The 'seewav' module in the given codebase is a modded version of a pull request by @Phoenix616 in the github page of the base seewav module
 
     with tempfile.TemporaryDirectory() as tmp:
-        seewav.visualize(audio=Path('output.mp3'),
+        seewav.visualize(audio=Path('
+        output.mp3'),
                         tmp=Path(tmp),
-                        out=Path("waves.mp4"),
+                        out=Path("tmp/waves.mp4"),
                         fg_color=[1, 0.78, 0],
                         bg_color=[0.21, 0.22, 0.24],
                         size=(480, 480),
@@ -49,7 +56,7 @@ def pfp_wave(buzz):
                         )
     
     
-    video= VideoFileClip("waves.mp4")
+    video= VideoFileClip("tmp/waves.mp4")
     video_duration = video.duration
     x_pos = 20
     y_pos = 'center' 
@@ -60,7 +67,7 @@ def pfp_wave(buzz):
         .resize(height=150)
     )
     final = CompositeVideoClip([video.set_duration(video_duration), title.set_duration(video_duration)])
-    final.write_videofile("wave_out.mp4")
+    final.write_videofile("tmp/wave_out.mp4")
 
 
 def v_merger(file1, file2):
@@ -71,7 +78,7 @@ def v_merger(file1, file2):
     clip2 = VideoFileClip(file2)
  
     final = clips_array([[clip1], [clip2]])
-    final.write_videofile("merged.mp4")
+    final.write_videofile("tmp/merged.mp4")
 
 
 def a_mixer(num):
@@ -83,10 +90,10 @@ def a_mixer(num):
     if num==3: au_path = "Moog_City_2"
 
     sound1 = AudioSegment.from_file(f"music/{au_path}.mp3", format="mp3")
-    sound2 = AudioSegment.from_file("output.mp3", format="mp3")
+    sound2 = AudioSegment.from_file("tmp/output.mp3", format="mp3")
 
     overlay = sound2.overlay(sound1, position=0)
-    overlay.export("F_output.mp3", format="mp3")
+    overlay.export("tmp/F_output.mp3", format="mp3")
 
 def backdrop(buzz):
 
@@ -110,7 +117,7 @@ def backdrop(buzz):
        return vid_duration
     
 
-    audio_duration = AudioSegment.from_file('output.mp3').duration_seconds
+    audio_duration = AudioSegment.from_file('tmp/output.mp3').duration_seconds
     video_duration = vid_dur(video_path)
     print(f"Audio Duration: {audio_duration} seconds, Video Duration: {video_duration}")
     
@@ -118,14 +125,14 @@ def backdrop(buzz):
     e_time = s_time+ ceil(audio_duration)
     print(s_time, e_time)
     video= VideoFileClip(video_path).subclip(s_time,e_time)
-    video.write_videofile('temp1.mp4')
+    video.write_videofile('tmp/temp1.mp4')
 
 def sub_append():
 
     #adds subtitle
 
-    system("ffmpeg -i subs.srt subtitle.ass")   
-    ass_file_path = 'subtitle.ass'
+    system("ffmpeg -i tmp/subs.srt tmp/subtitle.ass")   
+    ass_file_path = 'tmp/subtitle.ass'
     new_style_definition = 'Style: Default,Permanent Marker,15 ,&H0099ff,&Hffffff,&H0,&H0,1,0,0,0,100,100,0,0,1,1,2,5,50,50,50,1\n'
  
     with open(ass_file_path, 'r', encoding='utf-8') as file:
@@ -134,10 +141,10 @@ def sub_append():
     for line in lines:
         if line.strip().startswith('Style:'):
             lines[(lines.index(line))]=new_style_definition
-    with open('subtitle.ass', 'w') as file:
+    with open('tmp/subtitle.ass', 'w') as file:
         file.write(''.join(lines))
     
-    system('''ffmpeg -i temp2.mp4 -vf "ass=subtitle.ass" -c:a copy -c:v libx264 -crf 23 -preset veryfast Final_Output.mp4''')
+    system('''ffmpeg -i tmp/temp2.mp4 -vf "ass=tmp/subtitle.ass" -c:a copy -c:v libx264 -crf 23 -preset veryfast Output.mp4''')
 
 
 def add_aud(fil, aud):
@@ -149,7 +156,7 @@ def add_aud(fil, aud):
 
     new_audioclip = CompositeAudioClip([audioclip])
     videoclip.audio = new_audioclip
-    videoclip.write_videofile("temp2.mp4", codec='libx264', audio_codec='aac')
+    videoclip.write_videofile("tmp/temp2.mp4", codec='libx264', audio_codec='aac')
 
 
 def subs():
@@ -158,8 +165,8 @@ def subs():
 
     aai.settings.api_key = assmebly_ai_api
     transcriber = aai.Transcriber()
-    transcript = transcriber.transcribe('./output.mp3')
-    with open(f'subs.srt', 'a+') as handler:
+    transcript = transcriber.transcribe('tmp/output.mp3')
+    with open(f'tmp/subs.srt', 'a+') as handler:
         handler.write(transcript.export_subtitles_srt())
 
 def model(buzz):
@@ -198,7 +205,7 @@ def voice_charecter(chr, trs):
       }
     )
 
-    with open('output.mp3', 'wb') as f:
+    with open('tmp/output.mp3', 'wb') as f:
         f.write(response.content)
     
 
@@ -216,7 +223,7 @@ def clear():
 ''')
 
 def cleanup():
-    system("rm -rf F_output.mp3 merged.mp4 output.mp3 subs.srt subtitle.ass temp1.mp4 temp2.mp4 wave_out.mp4 waves.mp4")
+    #system("rm -rf F_output.mp3 merged.mp4 output.mp3 subs.srt subtitle.ass temp1.mp4 temp2.mp4 wave_out.mp4 waves.mp4")
 
 
 
