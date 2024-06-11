@@ -1,8 +1,0 @@
-g4f[all]
-pydub
-pillow
-moviepy 
-seewav 
-numpy 
-pycairo 
-tqdm
