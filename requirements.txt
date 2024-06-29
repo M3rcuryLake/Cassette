@@ -1,8 +1,10 @@
 g4f[all]
 pydub
 pillow
-moviepy 
-seewav 
+moviepy
+opencv-python
+seewav
 numpy 
 pycairo 
 tqdm
+assemblyai

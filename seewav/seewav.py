@@ -5,12 +5,10 @@
 """
 Generates a nice waveform visualization from an audio file, save it as a mp4 file.
 """
-import argparse
 import json
 import math
 import subprocess as sp
 import sys
-import tempfile
 from pathlib import Path
 
 import cairo
