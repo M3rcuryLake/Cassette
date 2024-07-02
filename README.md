@@ -1,5 +1,13 @@
 # Cassette
 
+
+![GitHub last commit](https://img.shields.io/github/last-commit/M3rcurylake/Cassette)
+![GitHub License](https://img.shields.io/github/license/M3rcurylake/Cassette)
+![GitHub Issues](https://img.shields.io/github/issues/M3rcurylake/Cassette)
+![GitHub Repo stars](https://img.shields.io/github/stars/M3rcurylake/Cassette)
+
+
+
 Cassette is a Python program designed to create 30-second explanatory videos suitable for Instagram Reels or YouTube Shorts without ever leaving the terminal. It offers multiple customization options for creating personalized videos. The program utilizes various APIs and libraries, including GPT-3.5-turbo model for transcript generation, AssemblyAI API for subtitle generation, UnrealSpeech API for voiceover generation, and ffmpeg along with moviepy for video editing.
 The 'seewav' module in the given codebase is a modified version of a [pull request](https://github.com/adefossez/seewav/pull/7) by @Phoenix616 at the github page of the base seewav module
 
@@ -8,7 +16,12 @@ Also, you may call this a indirect **free** python interpretation of [Brainrot.j
 
 ![Usage](https://github.com/M3rcuryLake/Cassette/blob/main/assets/usage.gif)
 
-Tested Only on Linux (Ubuntu 22.04, Fedora 40)
+
+
+Video Example : 
+
+https://github.com/M3rcuryLake/Cassette/assets/105872630/e7751f0a-085e-4898-8b3c-69007c551b2f
+
 
 
 
@@ -75,3 +88,7 @@ Once these steps are completed, you can execute Cassette with `python3 main.py` 
 - g4f not responding to API calls (common)
 - Correct options not chosen
 - Fonts not installed
+
+
+
+Tested Only on Linux (Ubuntu 22.04, Fedora 40)
