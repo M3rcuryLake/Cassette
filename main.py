@@ -3,7 +3,7 @@ import requests
 import assemblyai as aai
 import json
 from pydub import AudioSegment
-import random 
+import random
 from moviepy.editor import *
 from math import ceil
 from os import path, mkdir, system
@@ -20,7 +20,7 @@ from time import *
 
 f_dat = open('api_keys.json','r').read()
 data = eval(f_dat)
-assmebly_ai_api = data["AssemblyAI_API"]
+#assmebly_ai_api = data["AssemblyAI_API"]
 urs_api=data["UnrealSpeech_API"]
 
 
@@ -33,8 +33,8 @@ def pfp_wave(buzz, bg_m=1, fg=[1, 0.78, 0]):
 
     bg_list=[[0.21, 0.22, 0.24], [0.9058, 0.4352, 0.3176], [0.3960, 0.5058, 0.2784], [0.4549, 0.3176, 0.1764], [0.6745, 0.8823, 0.6862], [0.4549, 0.4117, 0.7137]]
     bg = bg_list[bg_m-1]
-    
-    
+z
+
     #use seewav to generate waveform video
     #The 'seewav' module in the given codebase is a modded version of a pull request by @Phoenix616 in the github page of the base seewav module
 
@@ -47,12 +47,12 @@ def pfp_wave(buzz, bg_m=1, fg=[1, 0.78, 0]):
                         size=(480, 480),
                         bars=70
                         )
-    
-    
+
+
     video= VideoFileClip("tmp/waves.mp4")
     video_duration = video.duration
     x_pos = 20
-    y_pos = 'center' 
+    y_pos = 'center'
 
     title = (
         ImageClip(video_p)
@@ -68,7 +68,7 @@ def v_merger(clip1, clip2):
 
     final = clips_array([[clip1], [clip2]])
     return final
-    
+
 
 
 def json_to_srt(json_file_path, srt_file_path):
@@ -79,12 +79,12 @@ def json_to_srt(json_file_path, srt_file_path):
         index = 1
         for subtitle in data:
             start_time = subtitle['start']
-            end_time = subtitle['end'] - 0.003           # -0.003 to ensure that the sutitles dont overlap
+            end_time = subtitle['end'] - 0.03           # -0.03 to ensure that the sutitles dont overlap
             text = subtitle['word']
             if end_time>=60.00 :
                 raise ValueError("Clip size of more than a minute not supported!")
-            
-            
+
+
             srt_file.write(f"{index}\n")
             srt_file.write(f"00:00:{start_time:06.3f} --> 00:00:{end_time:06.3f}\n")
             srt_file.write(f"{text}\n\n")
@@ -111,26 +111,26 @@ def a_mixer(num):
 def backdrop(buzz):
 
     #subclips the gameplay video according to the playtime of the audio
-    
+
     if buzz==1:
         video_path='backdrop/minecraft.mp4'
     if buzz==2:
-        video_path='backdrop/fh5.mp4'        
+        video_path='backdrop/fh5.mp4'
     if buzz==3:
         video_path='backdrop/gtav.mp4'
     if buzz==4:
         video_path='backdrop/trackmania.mp4'
-    
+
 
     def vid_dur(file_path):
        TempClip= VideoFileClip(file_path)
        vid_duration=TempClip.duration
        return vid_duration
-    
+
 
     audio_duration = AudioSegment.from_file('tmp/output.mp3').duration_seconds
     video_duration = vid_dur(video_path)
-    
+
     s_time = random.randint(0,ceil(video_duration-(audio_duration + 5)))
     e_time = s_time+ ceil(audio_duration)
     video= VideoFileClip(video_path).subclip(s_time,e_time)
@@ -149,14 +149,15 @@ def sub_append(font_no, weight=16, color="&H0099ff"):
         font="Jersey 10"
     if font_no==5 :
         font="VT323"
+        weight = 20
 
     #adds subtitle
-     
 
-    time_tup = localtime() 
+
+    time_tup = localtime()
     time_string = strftime("%d_%m_%Y__%H%M%S", time_tup)
 
-    system(f"ffmpeg -hide_banner -loglevel error -i tmp/subs.srt tmp/subtitle.ass")   
+    system(f"ffmpeg -hide_banner -loglevel error -i tmp/subs.srt tmp/subtitle.ass")
     ass_file_path = 'tmp/subtitle.ass'
     new_style_definition = f'Style: Default,{font},{weight},{color},&Hffffff,&H0,&H0,1,0,0,0,100,100,0,0,1,1,2,5,50,50,50,1\n'
 
@@ -168,12 +169,12 @@ def sub_append(font_no, weight=16, color="&H0099ff"):
             lines[(lines.index(line))]=new_style_definition
     with open('tmp/subtitle.ass', 'w') as file:
         file.write(''.join(lines))
-    
+
     system(f'ffmpeg -hide_banner -loglevel error -i tmp/temporary.mp4 -vf "ass=tmp/subtitle.ass" -c:a copy -c:v libx264 -crf 23 -preset veryfast {time_string}.mp4')
 
 
 def add_aud(videoclip, audioclip):
-    
+
     #adds audio to the given video
 
     new_audioclip = CompositeAudioClip([audioclip])
@@ -181,16 +182,16 @@ def add_aud(videoclip, audioclip):
     videoclip.write_videofile("tmp/temporary.mp4", codec='libx264', audio_codec='aac')
 
 
-def subs():
-
-    #generates subtitles using AssemblyAI API 
-    #this function is called only when "Timestamp captions" are set to "Sentence"
-
-    aai.settings.api_key = assmebly_ai_api
-    transcriber = aai.Transcriber()
-    transcript = transcriber.transcribe('tmp/output.mp3')
-    with open('tmp/subs.srt', 'a+') as handler:
-        handler.write(transcript.export_subtitles_srt())
+#def subs():
+#    #to remove
+#    #generates subtitles using AssemblyAI API
+#    #this function is called only when "Timestamp captions" are set to "Sentence"
+#
+#    aai.settings.api_key = assmebly_ai_api
+#    transcriber = aai.Transcriber()
+#    transcript = transcriber.transcribe('tmp/output.mp3')
+#    with open('tmp/subs.srt', 'a+') as handler:
+    #        handler.write(transcript.export_subtitles_srt())
 
 
 def model(buzz):
@@ -206,35 +207,7 @@ def model(buzz):
     return(gen)
 
 
-def voice_charecter(chr, trs):
-
-    #generates voice
-    if chr==1 : charecter="Dan"
-    if chr==2 : charecter="Will"
-    if chr==3 : charecter="Scarlett"
-    if chr==4 : charecter="Liv"
-    if chr==5 : charecter="Amy"
-
-    response = requests.post(
-      'https://api.v6.unrealspeech.com/stream',
-      headers = {
-        'Authorization' : f"Bearer {urs_api}"
-      },
-      json = {
-        'Text': trs, # Up to 1,000 characters
-        'VoiceId': charecter, # Scarlett, Dan, Liv, Will, Amy
-        'Bitrate': '192k', # 320k, 256k, 192k, ...
-        'Speed': '0', # -1.0 to 1.0
-        'Pitch': '1', # 0.5 to 1.5
-        'Codec': 'libmp3lame', # libmp3lame or pcm_mulaw
-      }
-    )
-
-    with open('tmp/output.mp3', 'wb') as f:
-        f.write(response.content)
-
-
-def voice_charecter_speech(chr, trs):
+def voice_charecter(chr, trs, caps):
 
     #generates voice
     if chr==1 : charecter="Dan"
@@ -245,24 +218,24 @@ def voice_charecter_speech(chr, trs):
 
 
     url = "https://api.v6.unrealspeech.com/speech"
-    
+
     payload = {
         "Text": trs,
         "VoiceId": charecter,
         "Bitrate": "192k",
         "Speed": "0",
         "Pitch": "1",
-        "TimestampType": "word"
+        "TimestampType": caps
     }
     headers = {
         "accept": "application/json",
         "content-type": "application/json",
         "Authorization": f"Bearer {urs_api}"
     }
-    
+
     response = requests.post(url, json=payload, headers=headers)
     sleep(5)
-    
+
     res = json.loads(response.text)
     voiceover = requests.get(res["OutputUri"])
     with open("tmp/output.mp3", 'wb') as f:
@@ -273,11 +246,11 @@ def voice_charecter_speech(chr, trs):
     with open("tmp/subs.json", 'wb') as f:
         for i in subs :
             f.write(i)
-    
+
 
 
 def clear():
-        
+
     if platform.startswith('win'):
         system("cls")
     else :
@@ -289,7 +262,7 @@ def clear():
 ▓  ▓▓▓▓▓▓▓▓  ▓▓▓▓  ▓▓▓      ▓▓▓▓      ▓▓▓      ▓▓▓▓▓▓▓  ▓▓▓▓▓▓▓▓  ▓▓▓▓▓      ▓▓▓
 █  ████  ██        ████████  ████████  ██  ███████████  ████████  █████  ███████
 ██      ███  ████  ███      ████      ███        █████  ████████  █████        █
-                                                                      
+
 ''')
 
 
@@ -307,7 +280,7 @@ def main():
 
     QueryList={}
     QueryList["script"]=input('\033[94m'+'''1. Transcript Prompt :
-    
+
 >>>  ''')
     clear()
     QueryList["music"]=int(input('''\n2. Use Background music?
@@ -316,7 +289,7 @@ def main():
 2.3 : Moog City 2 (press 3)
 
 >>> '''))
-    
+
     clear()
     QueryList["voices"]=int(input(f'''\n3. Coose a voice :
 3.1 : Dan: Young Male (press 1)
@@ -326,7 +299,7 @@ def main():
 3.5 : Amy: Mature Female (press 5)
 
 >>> '''))
-    
+
     clear()
     QueryList["backdrop"]=int(input('''4. Choose a background gameplay :
 4.1 : Minecraft (press 1)
@@ -336,7 +309,7 @@ def main():
 
 
 >>> '''))
-    
+
     clear()
     QueryList["charecter"]=int(input('''5. Choose a charecter image.
 5.1 : Denn (press 1)
@@ -345,17 +318,17 @@ def main():
 5.4 : K-11 (press 4)
 5.5 : Kee (press 5)
 5.6 : Kell (press 6)
-5.7 : Ron (press 7)           
+5.7 : Ron (press 7)
 
 >>> '''))
-    
+
     clear()
     QueryList["SubType"]=int(input('''\n6. Subtitles or Timestamps type :
 6.1 : Word (press 1)
 6.2 : Sentence (press 2)
 
 >>> '''))
-    
+
     clear()
     QueryList["Font"] = int(input('''\n7. Choose a Font :
 7.1 : Permanant Marker (press 1)
@@ -375,7 +348,7 @@ def main():
 8.5 : Glass Green (press 5)
 8.6 : Ultramarine Blue (press 6)
 
-[default - Discord Black]                                        
+[default - Discord Black]
 
 >>> '''))
 
@@ -387,15 +360,15 @@ def main():
 
 
     if QueryList["SubType"]==1 :
-        voice_charecter_speech(QueryList['voices'], script)
-        print('\n'+'[*] Voice Generated\n')
-        json_to_srt('tmp/subs.json', 'tmp/subs.srt' )
+        voice_charecter(QueryList['voices'], script, "word")
+    else :
+        voice_charecter(QueryList['voices'], script, "sentance")
 
-    else : 
-        voice_charecter(QueryList['voices'], script)
-        print('\n'+'[*] Voice Generated\n')
-        subs()
-    
+    print('\n'+'[*] Voice and Subtitles Generated\n')
+
+    json_to_srt('tmp/subs.json', 'tmp/subs.srt' )
+
+
     bckdrp = backdrop(QueryList["backdrop"])
     pwave = pfp_wave(QueryList['charecter'], QueryList["colour"])
     print('\n'+'[*] Background Video Generated\n')
@@ -405,24 +378,21 @@ def main():
 
     print('\n'+'[*] Mixing Audio\n')
     add_aud(merg, a_mixed)
-   
+
 
     print('\n'+'[*] Burning Captions\n')
     sub_append(QueryList["Font"])
-    
+
     #--
-    
+
     print("\n[*] Job Finished")
-    
+
     delr=input("delete all non essential files? (y/n) : ")
-    if delr=="y" : 
+    if delr=="y" :
         rmtree("tmp/")
     if delr=="n" :
         pass
-    
+
 if __name__ == "__main__":
     _is_main = True
     main()
-
-
-    
