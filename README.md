@@ -8,7 +8,7 @@
 
 
 
-Cassette is a Python program designed to create 30-second explanatory videos suitable for Instagram Reels or YouTube Shorts without ever leaving the terminal. It offers multiple customization options for creating personalized videos. The program utilizes various APIs and libraries, including GPT-3.5-turbo model for transcript generation, AssemblyAI API for subtitle generation, UnrealSpeech API for voiceover generation, and ffmpeg along with moviepy for video editing.
+Cassette is a Python program designed to create 30-second explanatory videos suitable for Instagram Reels or YouTube Shorts without ever leaving the terminal. It offers multiple customization options for creating personalized videos. The program utilizes APIs and libraries, including GPT-3.5-turbo model for transcript generation and UnrealSpeech API for voiceover generation, and ffmpeg along with moviepy for video editing.
 The 'seewav' module in the given codebase is a modified version of a [pull request](https://github.com/adefossez/seewav/pull/7) by @Phoenix616 at the github page of the base seewav module
 
 Also, you may call this a indirect **free** python interpretation of [Brainrot.js](https://www.brainrotjs.com/) (Also an inspiration)
@@ -29,13 +29,13 @@ https://github.com/M3rcuryLake/Cassette/assets/105872630/e7751f0a-085e-4898-8b3c
 
 Before running Cassette, follow these steps:
 
-1. **Sign Up at AssemblyAI and UnrealSpeech**: Visit [AssemblyAI](https://www.assemblyai.com/) and [UnrealSpeech](https://unrealspeech.com/) to create accounts.
+1. **Sign Up at UnrealSpeech**: Visit [UnrealSpeech](https://unrealspeech.com/) to create accounts.
 
 
 3. **Clone the Repo**: Clone The repo with `git clone https://github.com/M3rcuryLake/Cassete.git` 
 
 
-2. Replace the variables `AssemblyAI_API` and `UnrealSpeech_API` in `api_keys.json` with your respective API keys.
+2. Replace the variable`UnrealSpeech_API` in `api_keys.json` with your respective API key.
 
 
 4. **Install Prerequsites**: Ensure that Python and pip are installed on your system. Install additional dependencies and the Fonts by running:
