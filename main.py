@@ -1,6 +1,5 @@
 from g4f.client import Client
 import requests
-import assemblyai as aai
 import json
 from pydub import AudioSegment
 import random
@@ -20,7 +19,6 @@ from time import *
 
 f_dat = open('api_keys.json','r').read()
 data = eval(f_dat)
-#assmebly_ai_api = data["AssemblyAI_API"]
 urs_api=data["UnrealSpeech_API"]
 
 
@@ -33,7 +31,6 @@ def pfp_wave(buzz, bg_m=1, fg=[1, 0.78, 0]):
 
     bg_list=[[0.21, 0.22, 0.24], [0.9058, 0.4352, 0.3176], [0.3960, 0.5058, 0.2784], [0.4549, 0.3176, 0.1764], [0.6745, 0.8823, 0.6862], [0.4549, 0.4117, 0.7137]]
     bg = bg_list[bg_m-1]
-z
 
     #use seewav to generate waveform video
     #The 'seewav' module in the given codebase is a modded version of a pull request by @Phoenix616 in the github page of the base seewav module
@@ -95,9 +92,11 @@ def a_mixer(num):
 
     #mixes base audio with a background music
 
-    if num==1: au_path = "Minecraft"
-    if num==2: au_path = "Subwoofer_Lullaby"
-    if num==3: au_path = "Moog_City_2"
+    au_paths = ["Minecraft", "Subwoofer_Lullaby", "Moog_City_2"]
+    if 1 <= num <= len(au_paths):
+        au_path = au_paths[num - 1]
+    else:
+        au_path = None
 
     sound1 = AudioSegment.from_file(f"music/{au_path}.mp3", format="mp3")
     sound2 = AudioSegment.from_file("tmp/output.mp3", format="mp3")
@@ -112,14 +111,17 @@ def backdrop(buzz):
 
     #subclips the gameplay video according to the playtime of the audio
 
-    if buzz==1:
-        video_path='backdrop/minecraft.mp4'
-    if buzz==2:
-        video_path='backdrop/fh5.mp4'
-    if buzz==3:
-        video_path='backdrop/gtav.mp4'
-    if buzz==4:
-        video_path='backdrop/trackmania.mp4'
+    video_paths = [
+        'backdrop/minecraft.mp4',
+        'backdrop/fh5.mp4',
+        'backdrop/gtav.mp4',
+        'backdrop/trackmania.mp4'
+    ]
+
+    if 1 <= buzz <= len(video_paths):
+        video_path = video_paths[buzz - 1]
+    else:
+        video_path = None
 
 
     def vid_dur(file_path):
@@ -139,17 +141,21 @@ def backdrop(buzz):
 
 def sub_append(font_no, weight=16, color="&H0099ff"):
 
-    if font_no==1 :
-        font="Permanant Marker"
-    if font_no==2 :
-        font="Archivo Black"
-    if font_no==3 :
-        font="Bebas Neue"
-    if font_no==4 :
-        font="Jersey 10"
-    if font_no==5 :
-        font="VT323"
-        weight = 20
+    fonts = [
+        {"name": "Permanant Marker"},
+        {"name": "Archivo Black"},
+        {"name": "Bebas Neue"},
+        {"name": "Jersey 10"},
+        {"name": "VT323", "weight": 20}
+    ]
+
+    if 1 <= font_no <= len(fonts):
+        font_data = fonts[font_no - 1]
+        font = font_data["name"]
+        weight = font_data.get("weight", None)  # Default weight to None if not specified
+    else:
+        font = None
+        weight = None
 
     #adds subtitle
 
@@ -181,19 +187,6 @@ def add_aud(videoclip, audioclip):
     videoclip.audio = new_audioclip
     videoclip.write_videofile("tmp/temporary.mp4", codec='libx264', audio_codec='aac')
 
-
-#def subs():
-#    #to remove
-#    #generates subtitles using AssemblyAI API
-#    #this function is called only when "Timestamp captions" are set to "Sentence"
-#
-#    aai.settings.api_key = assmebly_ai_api
-#    transcriber = aai.Transcriber()
-#    transcript = transcriber.transcribe('tmp/output.mp3')
-#    with open('tmp/subs.srt', 'a+') as handler:
-    #        handler.write(transcript.export_subtitles_srt())
-
-
 def model(buzz):
 
     #generates Transcript of the video using g4f gpt 3.5 Turbo model
@@ -210,11 +203,11 @@ def model(buzz):
 def voice_charecter(chr, trs, caps):
 
     #generates voice
-    if chr==1 : charecter="Dan"
-    if chr==2 : charecter="Will"
-    if chr==3 : charecter="Scarlett"
-    if chr==4 : charecter="Liv"
-    if chr==5 : charecter="Amy"
+    characters = ["Dan", "Will", "Scarlett", "Liv", "Amy"]
+    if 1 <= chr <= len(characters):
+        character = characters[chr - 1]
+    else:
+        character = None
 
 
     url = "https://api.v6.unrealspeech.com/speech"
@@ -265,6 +258,36 @@ def clear():
 
 ''')
 
+
+def runner(script, music, voices, backdrop, charecter, subType, font, colour):
+    script = model(script)
+    print(script)
+    print('\n'+'[*] Script Generated\n')
+
+
+    if subType==1 :
+        voice_charecter(voices, script, "word")
+    else :
+        voice_charecter(voices, script, "sentance")
+
+    print('\n'+'[*] Voice and Subtitles Generated\n')
+    json_to_srt('tmp/subs.json', 'tmp/subs.srt' )
+
+
+    bckdrp = backdrop(backdrop)
+    pwave = pfp_wave(charecter, colour)
+    print('\n'+'[*] Background Video Generated\n')
+
+    a_mixed = a_mixer(music)
+    merg = v_merger(pwave, bckdrp)
+
+    print('\n'+'[*] Mixing Audio\n')
+    add_aud(merg, a_mixed)
+
+    print('\n'+'[*] Burning Captions\n')
+    sub_append(font)
+
+    print("\n[*] Job Finished")
 
 
 def main():
@@ -351,41 +374,18 @@ def main():
 [default - Discord Black]
 
 >>> '''))
-
     clear()
-    #main-code
-    script = model(QueryList['script'])
-    print(script)
-    print('\n'+'[*] Script Generated\n')
+
+    runner(QueryList["script"],
+        QueryList["music"],
+        QueryList["voices"],
+        QueryList["backdrop"],
+        QueryList["charecter"],
+        QueryList["SubType"],
+        QueryList["Font"],
+        QueryList["colour"])
 
 
-    if QueryList["SubType"]==1 :
-        voice_charecter(QueryList['voices'], script, "word")
-    else :
-        voice_charecter(QueryList['voices'], script, "sentance")
-
-    print('\n'+'[*] Voice and Subtitles Generated\n')
-
-    json_to_srt('tmp/subs.json', 'tmp/subs.srt' )
-
-
-    bckdrp = backdrop(QueryList["backdrop"])
-    pwave = pfp_wave(QueryList['charecter'], QueryList["colour"])
-    print('\n'+'[*] Background Video Generated\n')
-
-    a_mixed = a_mixer(QueryList['music'])
-    merg = v_merger(pwave, bckdrp)
-
-    print('\n'+'[*] Mixing Audio\n')
-    add_aud(merg, a_mixed)
-
-
-    print('\n'+'[*] Burning Captions\n')
-    sub_append(QueryList["Font"])
-
-    #--
-
-    print("\n[*] Job Finished")
 
     delr=input("delete all non essential files? (y/n) : ")
     if delr=="y" :
