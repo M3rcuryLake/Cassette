@@ -1,9 +1,10 @@
-from g4f.client import Client
+import g4f
+from moviepy import *
 import requests
 import json
 from pydub import AudioSegment
 import random
-from moviepy.editor import *
+from moviepy import *
 from math import ceil
 from os import path, mkdir, system
 from shutil import rmtree
@@ -52,11 +53,11 @@ def pfp_wave(buzz, bg_m=1, fg=[1, 0.78, 0]):
     y_pos = 'center'
 
     title = (
-        ImageClip(video_p)
-        .set_pos((x_pos, y_pos))
-        .resize(height=150)
+         ImageClip(video_p)
+        .with_position((x_pos, y_pos))
+        .resized(height=150)
     )
-    final = CompositeVideoClip([video.set_duration(video_duration), title.set_duration(video_duration)])
+    final = CompositeVideoClip([video.with_duration(video_duration), title.with_duration(video_duration)])
     return final
 
 def v_merger(clip1, clip2):
@@ -135,7 +136,7 @@ def backdrop(buzz):
 
     s_time = random.randint(0,ceil(video_duration-(audio_duration + 5)))
     e_time = s_time+ ceil(audio_duration)
-    video= VideoFileClip(video_path).subclip(s_time,e_time)
+    video= VideoFileClip(video_path).subclipped(s_time,e_time)
     return video
 
 
@@ -191,13 +192,11 @@ def model(buzz):
 
     #generates Transcript of the video using g4f gpt 3.5 Turbo model
 
-    client = Client()
-    response = client.chat.completions.create(
-    model="gpt-3.5-turbo",
+    response = g4f.ChatCompletion.create(
+    model=g4f.models.gpt_4,
     messages=[{"role": "user", "content": "Just answer the given question under 100 words in English, DO NOT include any titles, bullet points, Citations, or any special charecters, just the transcript. Now here is the Prompt :  " + buzz  }],
     )
-    gen=response.choices[0].message.content
-    return(gen)
+    return response
 
 
 def voice_charecter(chr, trs, caps):
@@ -214,7 +213,7 @@ def voice_charecter(chr, trs, caps):
 
     payload = {
         "Text": trs,
-        "VoiceId": charecter,
+        "VoiceId": character,
         "Bitrate": "192k",
         "Speed": "0",
         "Pitch": "1",
@@ -259,7 +258,7 @@ def clear():
 ''')
 
 
-def runner(script, music, voices, backdrop, charecter, subType, font, colour):
+def runner(script, music, voices, fbackdrop, charecter, subType, font, colour):
     script = model(script)
     print(script)
     print('\n'+'[*] Script Generated\n')
@@ -274,7 +273,7 @@ def runner(script, music, voices, backdrop, charecter, subType, font, colour):
     json_to_srt('tmp/subs.json', 'tmp/subs.srt' )
 
 
-    bckdrp = backdrop(backdrop)
+    bckdrp = backdrop(fbackdrop)
     pwave = pfp_wave(charecter, colour)
     print('\n'+'[*] Background Video Generated\n')
 

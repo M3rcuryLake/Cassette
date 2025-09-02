@@ -1,4 +1,4 @@
-g4f[all]
+g4f
 pydub
 pillow
 moviepy
